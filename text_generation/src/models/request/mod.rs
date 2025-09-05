@@ -1,7 +1,6 @@
-pub mod message;
-
 use serde::Serialize;
-use message::Message;
+use serde_json::Value;
+use crate::models::message::Message;
 
 #[derive(Serialize, Clone, Debug)]
 #[serde(rename_all = "camelCase")]
@@ -11,8 +10,22 @@ pub struct Request{
     #[serde(skip_serializing_if = "Option::is_none")]
     pub completion_options: Option<CompletionOptions>,
 
-
     pub messages: Vec<Message>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub tools: Option<Vec<FunctionWrapper>>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub json_object: Option<bool>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub json_schema: Option<JsonSchema>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub parallel_tool_calls: Option<bool>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub tool_choice: Option<ToolChoice>,
 }
 
 #[derive(Serialize, Clone, Debug)]
@@ -30,10 +43,39 @@ pub struct CompletionOptions{
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reasoning_options: Option<ReasoningOptions>,
 
+
 }
 
 #[derive(Serialize, Clone, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct ReasoningOptions {
     pub mode: String,
+}
+
+#[derive(Serialize, Clone, Debug)]
+#[serde(rename_all = "camelCase")]
+pub struct FunctionWrapper {
+    pub function: Function,
+}
+
+#[derive(Serialize, Clone, Debug)]
+#[serde(rename_all = "camelCase")]
+pub struct Function {
+    pub name: String,
+    pub description: String,
+    pub parameters: Value,
+    pub strict: bool,
+}
+
+#[derive(Serialize, Clone, Debug)]
+#[serde(rename_all = "camelCase")]
+pub struct JsonSchema {
+    pub schema: Value,
+}
+
+#[derive(Serialize, Clone, Debug)]
+#[serde(rename_all = "camelCase")]
+pub struct ToolChoice {
+    pub mode: String,
+    pub function_name: String,
 }

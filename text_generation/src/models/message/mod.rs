@@ -15,20 +15,7 @@ pub struct Message {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub tool_result_list: Option<ToolResultList>,
 
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub tools: Option<Vec<FunctionWrapper>>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub json_object: Option<bool>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub json_schema: Option<JsonSchema>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub parallel_tool_calls: Option<bool>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub tool_choice: Option<ToolChoice>,
+   
 }
 
 #[derive(Serialize, Clone, Debug)]
@@ -69,30 +56,4 @@ pub struct FunctionResult {
     pub content: String,
 }
 
-#[derive(Serialize, Clone, Debug)]
-#[serde(rename_all = "camelCase")]
-pub struct FunctionWrapper {
-    pub function: Function,
-}
 
-#[derive(Serialize, Clone, Debug)]
-#[serde(rename_all = "camelCase")]
-pub struct Function {
-    pub name: String,
-    pub description: String,
-    pub parameters: Value,
-    pub strict: bool,
-}
-
-#[derive(Serialize, Clone, Debug)]
-#[serde(rename_all = "camelCase")]
-pub struct JsonSchema {
-    pub schema: Value,
-}
-
-#[derive(Serialize, Clone, Debug)]
-#[serde(rename_all = "camelCase")]
-pub struct ToolChoice {
-    pub mode: String,
-    pub function_name: String,
-}
