@@ -3,5 +3,5 @@
 version = 4
 
 [[package]]
-name = "yandex_gpt"
+name = "nn_yandex_foundation"
 version = "0.1.0"
