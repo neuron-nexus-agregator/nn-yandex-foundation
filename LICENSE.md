@@ -1,5 +1,7 @@
 # MIT License
 
+Русскоязычная версия [LICENSE_RU.md](LICENSE_RU.md)
+
 Copyright (c) [2025] [Artem Gafarov]
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
