@@ -9,3 +9,7 @@ repository = "https://github.com/neuron-nexus-agregator/nn_yandex_gpt"
 
 [workspace]
 members = [ "yandex_art","text_generation"]
+
+[dependencies]
+yandex_art = { path = "yandex_art" }
+text_generation = { path = "text_generation" }
