@@ -61,11 +61,33 @@ impl TextGenerator{
         self.bucket_id = bucket_id;
     }
 
-    pub fn complete(&self, model: ModelType, version: Version, mut request: Request){ //-> Result<YandexResult, Box<dyn std::error::Error>>{
+    pub async fn complete(&self, model: ModelType, version: Version, mut request: Request) -> Result<YandexResult, Box<dyn std::error::Error>>{
         request.model_uri = format!("gpt://{}/{}/{}", self.bucket_id, model.as_str(), version.as_str());
         if let Some(opts) = request.completion_options.as_mut() {
             opts.stream = Some(false);
         }
+        let client = reqwest::Client::new();
+        let resp = client
+            .post(YANDEX_GPT_URL)
+            .header("Authorization", format!("Api-Key {}", self.api_key))
+            .json(&request)
+        .send().await?;
+
+        if !resp.status().is_success() {
+            let status = resp.status();
+            match resp.json::<YandexError>().await {
+                Ok(err) => {
+                    return Err(Box::new(std::io::Error::new(std::io::ErrorKind::Other, format!("{:?}", err))));
+                }
+                Err(_) => {
+                    return Err(Box::new(std::io::Error::new(std::io::ErrorKind::Other, format!("request failed with status: {}", status))));
+                }
+            }
+        }
+
+        let result = resp.json::<YandexResult>().await?;
+        Ok(result)
+
     }
     
 }
