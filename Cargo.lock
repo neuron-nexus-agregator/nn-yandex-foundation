@@ -3,6 +3,10 @@
 version = 4
 
 [[package]]
+name = "nn_yandex_foundation"
+version = "0.1.0"
+
+[[package]]
 name = "text_generation"
 version = "0.1.0"
 
