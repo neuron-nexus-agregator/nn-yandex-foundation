@@ -1,3 +1,71 @@
 pub mod response;
 pub mod request;
 pub mod message;
+
+use reqwest;
+
+use request::Request;
+use core::config::YANDEX_GPT_URL;
+use response::Result as YandexResult;
+use response::Error as YandexError;
+
+pub enum ModelType{
+    GptLite,
+    GptPro,
+    Llama8B,
+    Llama70B,
+}
+
+impl ModelType {
+    pub fn as_str(&self) -> &str {
+        match self {
+            ModelType::GptLite => "yandexgpt-lite",
+            ModelType::GptPro => "yandexgpt",
+            ModelType::Llama8B => "llama-lite",
+            ModelType::Llama70B => "llama",
+        }
+    }
+}
+
+pub enum Version{
+    Deprecated,
+    Latest,
+    RC
+}
+
+impl Version {
+    pub fn as_str(&self) -> &str {
+        match self {
+            Version::Deprecated => "deprecated",
+            Version::Latest => "latest",
+            Version::RC => "rc",
+        }
+    }
+}
+
+pub struct TextGenerator{
+    api_key: String,
+    bucket_id: String,
+}
+
+impl TextGenerator{
+    pub fn new(api_key: String, bucket_id: String) -> Self{
+        Self{
+            api_key,
+            bucket_id,
+        }
+    }
+
+    pub fn change_credentials(&mut self, api_key: String, bucket_id: String){
+        self.api_key = api_key;
+        self.bucket_id = bucket_id;
+    }
+
+    pub fn complete(&self, model: ModelType, version: Version, mut request: Request){ //-> Result<YandexResult, Box<dyn std::error::Error>>{
+        request.model_uri = format!("gpt://{}/{}/{}", self.bucket_id, model.as_str(), version.as_str());
+        if let Some(opts) = request.completion_options.as_mut() {
+            opts.stream = Some(false);
+        }
+    }
+    
+}
