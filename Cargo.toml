@@ -8,7 +8,7 @@ license = "MIT"
 repository = "https://github.com/neuron-nexus-agregator/nn_yandex_foundation"
 
 [workspace]
-members = [ "yandex_art","text_generation", "core"]
+members = [ "yandex_art","text_generation", "core" , "test_b"]
 
 [dependencies]
 yandex_art = { path = "yandex_art" }

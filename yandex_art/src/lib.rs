@@ -3,15 +3,18 @@ use models::request::Request;
 use models:: response::Response;
 use core::config::YANDEX_ART_URL;
 use core::config::YANDEX_GET_OPERATION;
+use std::fs::read;
 
 pub struct Art{
     api_key: String,
     bucket_id: String,
+    client: reqwest::Client
 }
 
 impl Art{
     pub fn new(api_key: String, bucket_id: String) -> Self{
-        Art { api_key, bucket_id }
+        let client = reqwest::Client::new();
+        Art { api_key, bucket_id, client }
     }
 
     pub fn change_credentials(&mut self, api_key: String, bucket_id: String){
@@ -34,8 +37,7 @@ impl Art{
     }
 
     pub async fn check_operation(&self, request_id: String) -> Result<Response, reqwest::Error>{
-        let client = reqwest::Client::new();
-        let resp = client
+        let resp = self.client
             .get(format!("{YANDEX_GET_OPERATION}/{request_id}").to_string())
             .header("Authorization", format!("Api-Key {}", self.api_key))
         .send().await?;
