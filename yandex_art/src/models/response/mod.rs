@@ -7,7 +7,7 @@ use time::OffsetDateTime;
 #[serde(rename_all = "camelCase")]
 pub struct ResponseWrapper{
     pub image: String,
-    pub model_version: String,
+    pub model_version: Option<String>,
 }
 
 #[derive(Deserialize, Clone, Debug)]
@@ -25,12 +25,12 @@ pub struct Response{
     pub id: String,
     pub description: Option<String>,
 
-    #[serde(with = "time::serde::rfc3339::option")]
+    #[serde(default, with = "time::serde::rfc3339::option")]
     pub created_at: Option<OffsetDateTime>,
 
     pub created_by: Option<String>,
 
-    #[serde(with = "time::serde::rfc3339::option")]
+    #[serde(default, with = "time::serde::rfc3339::option")]
     pub modified_at: Option<OffsetDateTime>,
 
     pub done: bool,
