@@ -1,6 +1,6 @@
 [package]
 name = "nn_yandex_foundation"
-version = "0.1.1"
+version = "0.1.0"
 edition = "2024"
 authors = ["Artem Gafarov <a.m.gafarov@ya.ru>"]
 description = "Unified library for working with Yandex Foundation Models (Единая библиотека для работы с Yandex Foundation Models)"
@@ -8,7 +8,7 @@ license = "MIT"
 repository = "https://github.com/neuron-nexus-agregator/nn_yandex_foundation"
 
 [workspace]
-members = [ "yandex_art","text_generation", "core" , "test_b"]
+members = [ "yandex_art","text_generation", "core" , "test_examples"]
 
 [dependencies]
 yandex_art = { path = "yandex_art" }
