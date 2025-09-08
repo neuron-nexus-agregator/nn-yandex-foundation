@@ -1,6 +1,6 @@
 [package]
 name = "nn_yandex_foundation"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2024"
 authors = ["Artem Gafarov <a.m.gafarov@ya.ru>"]
 description = "Unified library for working with Yandex Foundation Models (Единая библиотека для работы с Yandex Foundation Models)"

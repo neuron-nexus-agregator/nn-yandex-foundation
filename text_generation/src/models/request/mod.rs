@@ -28,6 +28,12 @@ pub struct Request{
     pub tool_choice: Option<ToolChoice>,
 }
 
+impl Request{
+    pub fn new(messages: Vec<Message>) -> Self{
+        Request { model_uri: "".to_string(), completion_options: None, messages: messages, tools: None, json_object: None, json_schema: None, parallel_tool_calls: None, tool_choice: None }
+    }
+}
+
 #[derive(Serialize, Clone, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct CompletionOptions{
@@ -44,6 +50,17 @@ pub struct CompletionOptions{
     pub reasoning_options: Option<ReasoningOptions>,
 
 
+}
+
+impl CompletionOptions {
+    pub fn new() -> Self{
+        CompletionOptions {
+            stream: Some(false),
+            temperature: None,
+            max_tokens: None,
+            reasoning_options: None
+        }
+    }
 }
 
 #[derive(Serialize, Clone, Debug)]
