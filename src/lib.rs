@@ -1,2 +1,2 @@
-pub use yandex_art;
-pub use text_generation;
+pub use nn_yandex_art;
+pub use nn_yandex_gpt;
