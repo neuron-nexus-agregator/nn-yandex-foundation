@@ -2,8 +2,10 @@ pub mod models;
 
 use models::request::Request;
 use models::response::Response;
-use core::config::{YANDEX_ART_URL, YANDEX_GET_OPERATION};
 use std::future::Future;
+
+const YANDEX_ART_URL: &str = "https://llm.api.cloud.yandex.net/foundationModels/v1/imageGenerationAsync";
+const YANDEX_GET_OPERATION: &str = "https://operation.api.cloud.yandex.net/operations";
 
 /// Errors returned by the Art library
 #[derive(Debug)]

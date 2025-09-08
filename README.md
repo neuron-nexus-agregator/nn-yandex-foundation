@@ -20,24 +20,23 @@ Repository: [https://github.com/neuron-nexus-agregator/nn\_yandex\_foundation](h
 Add the workspace crate to your `Cargo.toml`:
 
 ```curl
-cargo add nn_yandex_foundation
+cargo add nn_yandex_gpt
+cargo add nn_yandex_art
 ```
 
 Dependencies included in the workspace:
 
 * `yandex_art` – image generation
 * `text_generation` – text generation
-* `core` – shared configuration
-* `test_examples` – examples
 
 ## Usage
 
 ### Text Generation
 
 ```rust
-use text_generation::{TextGenerator, ModelType, Version};
-use text_generation::models::request::{Request as TextRequest, CompletionOptions};
-use text_generation::models::message::{Message, Role};
+use nn_yandex_gpt::{TextGenerator, ModelType, Version};
+use nn_yandex_gpt::models::request::{Request as TextRequest, CompletionOptions};
+use nn_yandex_gpt::models::message::{Message, Role};
 
 #[tokio::main]
 async fn main() {
@@ -80,7 +79,7 @@ async fn main() {
 ### Image Generation
 
 ```rust
-use nn_yandex_foundation::yandex_art
+use nn_yandex_art;
 
 #[tokio::main]
 async fn main() {

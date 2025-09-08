@@ -1,11 +1,11 @@
 [package]
-name = "test_b"
+name = "test_examples"
 version = "0.1.0"
 edition = "2024"
 
 [dependencies]
 serde_with = "3.14.0"
-text_generation = { path = "../text_generation" }
-yandex_art = { path = "../yandex_art" }
+text_generation = "nn_yandex_gpt"
+yandex_art = "nn_yandex_art"
 tokio = { version = "1.47", features = ["full"] }
 base64 = "0.22.1"
