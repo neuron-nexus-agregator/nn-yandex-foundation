@@ -79,7 +79,13 @@ async fn main() {
 ### Image Generation
 
 ```rust
-use nn_yandex_art;
+use nn_yandex_art
+use std::fs::File;
+use std::io::Write;
+use base64::engine::general_purpose::STANDARD;
+use base64::Engine;
+use tokio::time::{sleep, Duration};
+
 
 #[tokio::main]
 async fn main() {
