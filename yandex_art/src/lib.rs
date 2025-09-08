@@ -3,6 +3,7 @@ pub mod models;
 use models::request::Request;
 use models::response::Response;
 use core::config::{YANDEX_ART_URL, YANDEX_GET_OPERATION};
+use std::future::Future;
 
 /// Errors returned by the Art library
 #[derive(Debug)]
@@ -72,25 +73,31 @@ impl Art {
     /// # Returns
     ///
     /// `Result<Response, ArtError>` - The response or error
-    pub async fn generate_image_async(&self, mut request: Request) -> Result<Response, ArtError> {
+    pub fn generate_image(
+        &self,
+        mut request: Request,
+    ) -> impl Future<Output = Result<Response, ArtError>> + '_ {
         request.model_uri = format!("art://{}/yandex-art/latest", self.bucket_id);
+        let client = &self.client;
+        let api_key = &self.api_key;
 
-        let resp = self
-            .client
-            .post(YANDEX_ART_URL)
-            .header("Authorization", format!("Api-Key {}", self.api_key))
-            .json(&request)
-            .send()
-            .await
-            .map_err(ArtError::Http)?;
+        async move {
+            let resp = client
+                .post(YANDEX_ART_URL)
+                .header("Authorization", format!("Api-Key {}", api_key))
+                .json(&request)
+                .send()
+                .await
+                .map_err(ArtError::Http)?;
 
-        let result: Response = resp.json().await.map_err(ArtError::Http)?;
+            let result: Response = resp.json().await.map_err(ArtError::Http)?;
 
-        if let Some(err) = &result.error {
-            return Err(ArtError::Api(err.message.clone()));
+            if let Some(err) = &result.error {
+                return Err(ArtError::Api(err.message.clone()));
+            }
+
+            Ok(result)
         }
-
-        Ok(result)
     }
 
     /// Checks the status of an image generation operation
@@ -102,30 +109,33 @@ impl Art {
     /// # Returns
     ///
     /// `Result<Response, ArtError>` - Current operation status or error
-    pub async fn check_operation(&self, request_id: &str) -> Result<Response, ArtError> {
-        let resp = self
-            .client
-            .get(format!("{YANDEX_GET_OPERATION}/{request_id}"))
-            .header("Authorization", format!("Api-Key {}", self.api_key))
-            .send()
-            .await
-            .map_err(ArtError::Http)?;
+    pub fn check_operation(
+        &self,
+        request_id: &str,
+    ) -> impl Future<Output = Result<Response, ArtError>> + '_ {
+        let client = &self.client;
+        let api_key = &self.api_key;
+        let request_id = request_id.to_string();
 
-        let text = resp.text().await.map_err(ArtError::Http)?;
+        async move {
+            let resp = client
+                .get(format!("{YANDEX_GET_OPERATION}/{request_id}"))
+                .header("Authorization", format!("Api-Key {}", api_key))
+                .send()
+                .await
+                .map_err(ArtError::Http)?;
 
-        let result: Response = match serde_json::from_str(&text) {
-            Ok(r) => r,
-            Err(e) => {
-                return Err(ArtError::Api(format!(
-                    "Failed to parse JSON: {e}. Response text: {text}"
-                )))
+            let text = resp.text().await.map_err(ArtError::Http)?;
+
+            let result: Response = serde_json::from_str(&text).map_err(|e| {
+                ArtError::Api(format!("Failed to parse JSON: {e}. Response text: {text}"))
+            })?;
+
+            if let Some(err) = &result.error {
+                return Err(ArtError::Api(err.message.clone()));
             }
-        };
 
-        if let Some(err) = &result.error {
-            return Err(ArtError::Api(err.message.clone()));
+            Ok(result)
         }
-
-        Ok(result)
     }
 }
