@@ -3,7 +3,6 @@ use models::request::Request;
 use models:: response::Response;
 use core::config::YANDEX_ART_URL;
 use core::config::YANDEX_GET_OPERATION;
-use std::fs::read;
 
 pub struct Art{
     api_key: String,
