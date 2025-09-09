@@ -106,7 +106,7 @@ impl Art {
     ///
     /// # Arguments
     ///
-    /// * `request_id` - ID of the request returned by `generate_image_async`
+    /// * `request_id` - ID of the request returned by `generate_image`
     ///
     /// # Returns
     ///

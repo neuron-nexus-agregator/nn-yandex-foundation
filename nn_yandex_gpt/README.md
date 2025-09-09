@@ -63,6 +63,15 @@ async fn main() {
 }
 ```
 
+## Error Handling
+
+* `GeneratorError` for text generation: HTTP, API, Unknown.
+
+## Contributing
+
+Contributions are welcome! Please open issues or pull requests on [GitHub](https://github.com/neuron-nexus-agregator/nn-yandex-foundation).
+
 ## License
 
-MIT
+This project is licensed under the MIT License.
+

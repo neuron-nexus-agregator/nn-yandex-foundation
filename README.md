@@ -86,7 +86,6 @@ use base64::engine::general_purpose::STANDARD;
 use base64::Engine;
 use tokio::time::{sleep, Duration};
 
-
 #[tokio::main]
 async fn main() {
     const BUCKET: &str = "your-bucket-id";
@@ -160,7 +159,7 @@ async fn main() {
 
 ## Contributing
 
-Contributions are welcome! Please open issues or pull requests on [GitHub](https://github.com/neuron-nexus-agregator/nn_yandex_foundation).
+Contributions are welcome! Please open issues or pull requests on [GitHub](https://github.com/neuron-nexus-agregator/nn-yandex-foundation).
 
 ## License
 
