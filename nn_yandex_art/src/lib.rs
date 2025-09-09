@@ -74,7 +74,7 @@ impl Art {
     ///
     /// # Returns
     ///
-    /// `Result<Response, ArtError>` - The response or error
+    /// `Result<Response, ArtError>` - The response with `id` and `done`-flag or error
     pub fn generate_image(
         &self,
         mut request: Request,
@@ -106,7 +106,7 @@ impl Art {
     ///
     /// # Arguments
     ///
-    /// * `request_id` - ID of the request returned by `generate_image`
+    /// * `request_id` - ID of the request from `response` returned by `generate_image`
     ///
     /// # Returns
     ///
