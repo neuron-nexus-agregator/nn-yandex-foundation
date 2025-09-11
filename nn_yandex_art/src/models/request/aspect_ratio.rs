@@ -7,11 +7,14 @@ pub struct AspectRatio{
     height_ratio: i64,
 }
 
+/// Builder for AspectRatio
+#[derive(Debug)]
 pub struct AspectRatioBuilder{
     width_ratio: i64,
     height_ratio: i64,
 }
 
+/// Builder for AspectRatio
 impl AspectRatioBuilder{
     pub fn new() -> Self{
         AspectRatioBuilder{

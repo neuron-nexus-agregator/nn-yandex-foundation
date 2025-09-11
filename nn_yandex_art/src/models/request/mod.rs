@@ -18,6 +18,9 @@ pub struct Request{
 }
 
 
+/// Builder for Request
+/// `messages` & `generation_options` are required
+#[derive(Debug)]
 pub struct RequestBuilder {
     messages: Vec<Message>,
     generation_options: Option<GenerationOptions>,

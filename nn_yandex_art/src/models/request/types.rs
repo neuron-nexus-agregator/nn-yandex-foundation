@@ -1,3 +1,5 @@
+/// Enum for image mime types
+#[derive(Debug)]
 pub enum ImageType{
     Jpeg,
     Png,

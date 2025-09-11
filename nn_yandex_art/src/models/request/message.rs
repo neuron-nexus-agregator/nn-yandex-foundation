@@ -8,11 +8,17 @@ pub struct Message{
     weight: i64,
 }
 
+/// Builder for Message
+/// `text` is required
+#[derive(Debug)]
 pub struct MessageBuilder {
     text: String,
     weight: i64,
 }
 
+
+/// Builder for Message
+/// `text` is required
 impl MessageBuilder {
     pub fn new() -> Self{
         MessageBuilder{

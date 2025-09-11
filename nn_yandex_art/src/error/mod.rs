@@ -17,6 +17,30 @@ impl std::fmt::Display for BuildError {
 
 impl std::error::Error for BuildError {}
 
+/// Errors returned by the Art library
+#[derive(Debug)]
+pub enum ArtError {
+    /// HTTP request error
+    Http(reqwest::Error),
+    /// Error returned by Yandex API
+    Api(String),
+    /// Operation is not yet finished
+    NotReady,
+    /// Response field is missing in the result
+    MissingResponse,
+}
+
+impl std::fmt::Display for ArtError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            ArtError::Http(e) => write!(f, "HTTP error: {}", e),
+            ArtError::Api(msg) => write!(f, "API error: {}", msg),
+            ArtError::NotReady => write!(f, "Operation not finished"),
+            ArtError::MissingResponse => write!(f, "Response missing"),
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

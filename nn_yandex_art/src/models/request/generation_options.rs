@@ -12,12 +12,18 @@ pub struct GenerationOptions{
     aspect_ratio: AspectRatio,
 }
 
+/// Builder for GenerationOptions
+/// `mime_type` & `aspect_ratio` are required
+#[derive(Debug)]
 pub struct GenerationOptionsBuilder {
     mime_type: Option<String>,
     seed: Option<i64>,
     aspect_ratio: Option<AspectRatio>,
 }
 
+
+/// Builder for GenerationOptions
+/// `mime_type` & `aspect_ratio` are required
 impl GenerationOptionsBuilder {
     pub fn new() -> Self {
         GenerationOptionsBuilder {
