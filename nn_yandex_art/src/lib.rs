@@ -1,4 +1,5 @@
 pub mod models;
+mod error;
 
 use models::request::Request;
 use models::response::Response;

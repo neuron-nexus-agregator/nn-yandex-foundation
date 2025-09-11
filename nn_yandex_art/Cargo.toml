@@ -1,6 +1,6 @@
 [package]
 name = "nn_yandex_art"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2024"
 authors = ["Artem Gafarov <gafarov.neuron.nexus@gmail.com>"]
 description = "Library for working with Yandex ART API"
