@@ -11,7 +11,7 @@ repository = "https://github.com/neuron-nexus-agregator/nn-yandex-foundation"
 members = [
     "nn_yandex_art",
     "nn_yandex_gpt"
-]
+, "templates"]
 
 [dependencies]
 nn_yandex_art = { path = "nn_yandex_art" }
