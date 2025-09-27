@@ -6,3 +6,6 @@ edition = "2024"
 [dependencies]
 "nn_yandex_art" = {path = "../nn_yandex_art"}
 anyhow = "1.0.100"
+tokio = { version = "1.47.1", features = ["rt", "rt-multi-thread", "macros"] }
+base64 = "0.22.1"
+dotenvy = "0.15.7"

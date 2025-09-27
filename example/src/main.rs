@@ -1,5 +1,15 @@
 mod image_generation;
+use image_generation::generate_image;
+use dotenvy::dotenv;
 
-fn main() {
-    println!("Hello, world!");
+#[tokio::main]
+async fn main() {
+    dotenv().ok();
+    let prompt = "Dog in sofa";
+    let path = "./image.png";
+    match generate_image(prompt, path).await{
+        Ok(_) => println!("Image generated successfully"),
+        Err(e) => eprintln!("{e}"),
+    }
 }
+

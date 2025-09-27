@@ -3,15 +3,24 @@ use nn_yandex_art::models::request::message::MessageBuilder;
 use nn_yandex_art::models::request::aspect_ratio::AspectRatioBuilder;
 use nn_yandex_art::models::request::generation_options::GenerationOptionsBuilder;
 use nn_yandex_art::models::request::types::ImageType;
+use nn_yandex_art::models::request::RequestBuilder;
 use anyhow;
+use tokio::time::{sleep, Duration};
+use std::fs::File;
+use std::io::Write;
+use base64::engine::general_purpose::STANDARD;
+use base64::Engine;
+use std::env;
 
-async fn generate_image(prompt: &str, path: &str) -> Result<(), anyhow::Error>{
+pub async fn generate_image(prompt: &str, path: &str) -> Result<(), anyhow::Error>{
+
+    let BUCKET = env::var("BUCKET")?;
+    let API_KEY = env::var("API")?;
+
     let message = MessageBuilder::new()
         .text(prompt)
         .weight(1)
         .build()?;
-
-    let messages = vec![message];
 
 
     let aspect_ratio = AspectRatioBuilder::new()
@@ -22,8 +31,48 @@ async fn generate_image(prompt: &str, path: &str) -> Result<(), anyhow::Error>{
     let generation_options = GenerationOptionsBuilder::new()
         .aspect_ratio(aspect_ratio)
         .mime_type(ImageType::Png)
-        .seed(121212121212) // !Optional
+        //.seed(121212121212) // !Optional
         .build()?;
 
-    Ok(())
+    let request = RequestBuilder::new()
+        .generation_options(generation_options)
+        .message(message)
+        .build()?;
+
+    let art = Art::new(API_KEY, BUCKET);
+    let mut res = art.generate_image(request).await?;
+    let id = res.id;
+
+    if let Some(e) = res.error{
+        return Err(anyhow::anyhow!("{}", e.message))
+    }
+
+    while !res.done{
+        sleep(Duration::from_secs(1)).await;
+        res = art.check_operation(&id).await?
+    }
+
+    if let Some(resp) = res.response {
+        save_image(resp.image, path)
+    } else {
+        Err(anyhow::anyhow!("Response is missing image data"))
+    }
+}
+
+fn save_image(image: String, path: &str) -> Result<(), anyhow::Error>{
+    match STANDARD.decode(image) {
+        Ok(bytes) => {
+            match File::create(path) {
+                Ok(mut file) => {
+                    if let Err(e) = file.write_all(&bytes) {
+                        Err(anyhow::anyhow!("Error writing file: {e}"))
+                    } else {
+                        Ok(())
+                    }
+                }
+                Err(e) => Err(anyhow::anyhow!(e)),
+            }
+        }
+        Err(e) => Err(anyhow::anyhow!(e)),
+    }
 }
