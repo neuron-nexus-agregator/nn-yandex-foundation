@@ -227,7 +227,7 @@ dependencies = [
  "anyhow",
  "base64",
  "dotenvy",
- "nn_yandex_art",
+ "nn_yandex_art 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "tokio",
 ]
 
@@ -784,10 +784,22 @@ dependencies = [
 ]
 
 [[package]]
+name = "nn_yandex_art"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d99819d9ebea529a4fec9d0b74ff27521b3295df4ba46b82863e8f1b2388ea4d"
+dependencies = [
+ "reqwest",
+ "serde",
+ "serde_json",
+ "time",
+]
+
+[[package]]
 name = "nn_yandex_foundation"
 version = "0.1.0"
 dependencies = [
- "nn_yandex_art",
+ "nn_yandex_art 0.2.0",
  "nn_yandex_gpt",
 ]
 
