@@ -12,7 +12,7 @@ use base64::engine::general_purpose::STANDARD;
 use base64::Engine;
 use std::env;
 
-pub async fn generate_image(prompt: &str, path: &str) -> Result<(), anyhow::Error>{
+pub async fn generate_image(prompt: &str, path: &str, width_ratio: i64, height_ratio: i64) -> Result<(), anyhow::Error>{
 
     let BUCKET = env::var("BUCKET")?;
     let API_KEY = env::var("API")?;
@@ -24,8 +24,8 @@ pub async fn generate_image(prompt: &str, path: &str) -> Result<(), anyhow::Erro
 
 
     let aspect_ratio = AspectRatioBuilder::new()
-        .width_ratio(1)
-        .height_ratio(1)
+        .width_ratio(width_ratio)
+        .height_ratio(height_ratio)
         .build();
 
     let generation_options = GenerationOptionsBuilder::new()
