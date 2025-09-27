@@ -15,81 +15,88 @@ Add to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-nn_yandex_art = "0.1.0"
+nn_yandex_art = "0.2.0"
 ```
 
 ## Example
 
 ```rust
-use nn_yandex_art
+use nn_yandex_art::Art;
+use nn_yandex_art::models::request::message::MessageBuilder;
+use nn_yandex_art::models::request::aspect_ratio::AspectRatioBuilder;
+use nn_yandex_art::models::request::generation_options::GenerationOptionsBuilder;
+use nn_yandex_art::models::request::types::ImageType;
+use nn_yandex_art::models::request::RequestBuilder;
+use anyhow;
+use tokio::time::{sleep, Duration};
 use std::fs::File;
 use std::io::Write;
 use base64::engine::general_purpose::STANDARD;
 use base64::Engine;
-use tokio::time::{sleep, Duration};
+use std::env;
 
-#[tokio::main]
-async fn main() {
-    const BUCKET: &str = "your-bucket-id";
-    const API_KEY: &str = "your-api-key";
+pub async fn generate_image(prompt: &str, path: &str) -> Result<(), anyhow::Error>{
 
-    let generator = yandex_art::Art::new(API.to_string(), BUCKET.to_string());
+    let BUCKET = env::var("BUCKET")?;
+    let API_KEY = env::var("API")?;
 
-    let messages = vec![yandex_art::models::request::Message {
-        text: "Dog".to_string(),
-        weight: "1".to_string(),
-    }];
+    let message = MessageBuilder::new()
+        .text(prompt)
+        .weight(1)
+        .build()?;
 
-    let options = yandex_art::models::request::GenerationOptions {
-        mime_type: "image/png".to_string(),
-        seed: None,
-        aspect_ratio: yandex_art::models::request::AspectRatio {
-            width_ratio: 1,
-            height_ratio: 1,
-        },
-    };
 
-    let req = yandex_art::models::request::Request::new(messages, options);
+    let aspect_ratio = AspectRatioBuilder::new()
+        .width_ratio(1)
+        .height_ratio(1)
+        .build();
 
-    let mut yandex_res = match generator.generate_image(req).await {
-        Ok(res) => res,
-        Err(e) => {
-            eprintln!("Error generating image: {e}");
-            return;
-        }
-    };
+    let generation_options = GenerationOptionsBuilder::new()
+        .aspect_ratio(aspect_ratio)
+        .mime_type(ImageType::Png)
+        //.seed(121212121212) // !Optional
+        .build()?;
 
-    let id = yandex_res.id.clone();
+    let request = RequestBuilder::new()
+        .generation_options(generation_options)
+        .message(message)
+        .build()?;
 
-    while !yandex_res.done {
-        sleep(Duration::from_secs(1)).await;
-        yandex_res = match generator.check_operation(&id).await {
-            Ok(res) => res,
-            Err(e) => {
-                eprintln!("Error checking operation: {e}");
-                continue;
-            }
-        };
+    let art = Art::new(API_KEY, BUCKET);
+    let mut res = art.generate_image(request).await?;
+    let id = res.id;
+
+    if let Some(e) = res.error{
+        return Err(anyhow::anyhow!("{}", e.message))
     }
 
-    if let Some(resp) = yandex_res.response {
-        match STANDARD.decode(&resp.image) {
-            Ok(bytes) => {
-                match File::create("Image.png") {
-                    Ok(mut file) => {
-                        if let Err(e) = file.write_all(&bytes) {
-                            eprintln!("Error writing file: {e}");
-                        } else {
-                            println!("Image successfully saved as Image.png");
-                        }
-                    }
-                    Err(e) => eprintln!("Error creating file: {e}"),
-                }
-            }
-            Err(e) => eprintln!("Error decoding Base64: {e}"),
-        }
+    while !res.done{
+        sleep(Duration::from_secs(1)).await;
+        res = art.check_operation(&id).await?
+    }
+
+    if let Some(resp) = res.response {
+        save_image(resp.image, path)
     } else {
-        eprintln!("Response is missing image data");
+        Err(anyhow::anyhow!("Response is missing image data"))
+    }
+}
+
+fn save_image(image: String, path: &str) -> Result<(), anyhow::Error>{
+    match STANDARD.decode(image) {
+        Ok(bytes) => {
+            match File::create(path) {
+                Ok(mut file) => {
+                    if let Err(e) = file.write_all(&bytes) {
+                        Err(anyhow::anyhow!("Error writing file: {e}"))
+                    } else {
+                        Ok(())
+                    }
+                }
+                Err(e) => Err(anyhow::anyhow!(e)),
+            }
+        }
+        Err(e) => Err(anyhow::anyhow!(e)),
     }
 }
 ```
@@ -97,6 +104,7 @@ async fn main() {
 ## Error Handling
 
 * `ArtError` for image generation: HTTP, API, NotReady, MissingResponse.
+* `BuildError` for struct builders
 
 ## Contributing
 
