@@ -1,5 +1,5 @@
 pub mod models;
-mod error;
+pub mod error;
 
 use models::request::Request;
 use models::response::Response;
