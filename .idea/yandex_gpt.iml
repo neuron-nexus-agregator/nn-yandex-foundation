@@ -5,6 +5,7 @@
       <sourceFolder url="file://$MODULE_DIR$/nn_yandex_art/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/nn_yandex_gpt/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/templates/src" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>
     <orderEntry type="inheritedJdk" />

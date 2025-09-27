@@ -66,7 +66,7 @@ impl CompletionOptions {
 #[derive(Serialize, Clone, Debug)]
 pub enum ReasoningMode{
     #[serde(rename = "REASONING_MODE_UNSPECIFIED")]
-    RasoningModeUnspecified,
+    ReasoningModeUnspecified,
 
     #[serde(rename = "DISABLED")]
     Disabled,
