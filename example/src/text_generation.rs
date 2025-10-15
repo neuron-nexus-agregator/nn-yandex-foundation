@@ -1,26 +1,3 @@
-# nn\_yandex\_gpt
-
-Rust client for **Yandex GPT API**.
-This crate allows developers to easily generate text completions using Yandex Foundation Models.
-
-## Features
-
-* Supports multiple models: GptLite, GptPro, Llama8B, Llama70B
-* Select version: Deprecated, Latest, RC
-* Handles HTTP and API errors with structured results
-
-## Installation
-
-Add to your `Cargo.toml`:
-
-```toml
-[dependencies]
-nn_yandex_gpt = "0.1.0"
-```
-
-## Example
-
-```rust
 use nn_yandex_gpt::{TextGenerator, ModelType, Version};
 use nn_yandex_gpt::models::request::{RequestBuilder, CompletionOptions};
 use nn_yandex_gpt::models::message::{MessageBuilder, Role};
@@ -110,17 +87,3 @@ pub async fn start_chating(){
         }
     }
 }
-```
-
-## Error Handling
-
-* `GeneratorError` for text generation: HTTP, API, Unknown.
-
-## Contributing
-
-Contributions are welcome! Please open issues or pull requests on [GitHub](https://github.com/neuron-nexus-agregator/nn-yandex-foundation).
-
-## License
-
-This project is licensed under the MIT License.
-

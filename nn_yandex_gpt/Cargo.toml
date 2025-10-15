@@ -1,6 +1,6 @@
 [package]
 name = "nn_yandex_gpt"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2024"
 authors = ["Artem Gafarov <gafarov.neuron.nexus@gmail.com"]
 description = "Library for working with Yandex GPT API"
@@ -11,5 +11,4 @@ repository = "https://github.com/neuron-nexus-agregator/nn-yandex-foundation"
 reqwest = { version =  "0.12.23", features = ["json"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0.143"
-serde_as = "0.0.1"
 serde_with = "3.14.0"

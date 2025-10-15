@@ -106,9 +106,6 @@ impl TextGenerator {
 
         async move {
             request.model_uri = format!("gpt://{}/{}/{}", bucket_id, model.as_str(), version.as_str());
-            if let Some(opts) = request.completion_options.as_mut() {
-                opts.stream = Some(false);
-            }
 
             let resp = client
                 .post(YANDEX_GPT_URL)
@@ -121,9 +118,9 @@ impl TextGenerator {
             let status = resp.status().clone();
 
             if !resp.status().is_success() {
-                match resp.json::<YandexError>().await {
-                    Ok(err) => return Err(GeneratorError::Api(err)),
-                    Err(_) => return Err(GeneratorError::Unknown(format!("request failed with status: {status}"))),
+                return match resp.json::<YandexError>().await {
+                    Ok(err) => Err(GeneratorError::Api(err)),
+                    Err(_) => Err(GeneratorError::Unknown(format!("request failed with status: {status}"))),
                 }
             }
 

@@ -5,6 +5,7 @@ edition = "2024"
 
 [dependencies]
 nn_yandex_art = "0.2.0"
+nn_yandex_gpt = { path = "../nn_yandex_gpt" }
 anyhow = "1.0.100"
 tokio = { version = "1.47.1", features = ["rt", "rt-multi-thread", "macros"] }
 base64 = "0.22.1"

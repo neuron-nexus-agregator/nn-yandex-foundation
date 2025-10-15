@@ -1,4 +1,4 @@
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use crate::models::message::Message;
 
@@ -8,46 +8,105 @@ pub struct Request{
     pub(crate) model_uri: String,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub completion_options: Option<CompletionOptions>,
+    pub(crate) completion_options: Option<CompletionOptions>,
 
     pub messages: Vec<Message>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub tools: Option<Vec<FunctionWrapper>>,
+    tools: Option<Vec<FunctionWrapper>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub json_object: Option<bool>,
+    json_object: Option<bool>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub json_schema: Option<JsonSchema>,
+    json_schema: Option<JsonSchema>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub parallel_tool_calls: Option<bool>,
+    parallel_tool_calls: Option<bool>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub tool_choice: Option<ToolChoice>,
+    tool_choice: Option<ToolChoice>,
 }
 
-impl Request{
-    pub fn new(messages: Vec<Message>) -> Self{
-        Request { model_uri: "".to_string(), completion_options: None, messages: messages, tools: None, json_object: None, json_schema: None, parallel_tool_calls: None, tool_choice: None }
+#[derive(Clone, Debug)]
+pub struct RequestBuilder{
+    completion_options: Option<CompletionOptions>,
+    messages: Vec<Message>,
+    tools: Option<Vec<FunctionWrapper>>,
+    json_object: Option<bool>,
+    json_schema: Option<JsonSchema>,
+    parallel_tool_calls: Option<bool>,
+    tool_choice: Option<ToolChoice>,
+}
+
+impl RequestBuilder {
+    pub fn new() -> Self {
+        RequestBuilder {
+            completion_options: None,
+            messages: Vec::new(),
+            tools: None,
+            json_object: None,
+            json_schema: None,
+            parallel_tool_calls: None,
+            tool_choice: None
+        }
+    }
+
+    pub fn message(mut self, message: Message) -> Self {
+        self.messages.push(message);
+        self
+    }
+    pub fn with_completion_options(mut self, completion_options: CompletionOptions) -> Self {
+        self.completion_options = Some(completion_options);
+        self
+    }
+    pub fn with_tools(mut self, tools: Vec<FunctionWrapper>) -> Self {
+        self.tools = Some(tools);
+        self
+    }
+    pub fn with_json_object(mut self, json_object: bool) -> Self {
+        self.json_object = Some(json_object);
+        self
+    }
+    pub fn with_json_schema(mut self, json_schema: JsonSchema) -> Self {
+        self.json_schema = Some(json_schema);
+        self
+    }
+    pub fn with_parallel_tool_calls(mut self, parallel_tool_calls: bool) -> Self {
+        self.parallel_tool_calls = Some(parallel_tool_calls);
+        self
+    }
+    pub fn with_tool_choice(mut self, tool_choice: ToolChoice) -> Self {
+        self.tool_choice = Some(tool_choice);
+        self
+    }
+    pub fn build(self) -> Request {
+        Request {
+            model_uri: "".to_string(),
+            completion_options: self.completion_options,
+            messages: self.messages,
+            tools: self.tools,
+            json_object: self.json_object,
+            json_schema: self.json_schema,
+            parallel_tool_calls: self.parallel_tool_calls,
+            tool_choice: self.tool_choice
+        }
     }
 }
 
 #[derive(Serialize, Clone, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct CompletionOptions{
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub(crate) stream: Option<bool>,
+    stream: bool,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub temperature: Option<f64>,
+    temperature: Option<f64>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub max_tokens: Option<i64>,
+    max_tokens: Option<i64>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub reasoning_options: Option<ReasoningOptions>,
+    reasoning_options: Option<ReasoningOptions>,
 
 
 }
@@ -55,11 +114,23 @@ pub struct CompletionOptions{
 impl CompletionOptions {
     pub fn new() -> Self{
         CompletionOptions {
-            stream: Some(false),
+            stream: false,
             temperature: None,
             max_tokens: None,
             reasoning_options: None
         }
+    }
+    pub fn with_temperature(mut self, temperature: f64) -> Self {
+        self.temperature = Some(temperature);
+        self
+    }
+    pub fn with_max_tokens(mut self, max_tokens: i64) -> Self {
+        self.max_tokens = Some(max_tokens);
+        self
+    }
+    pub fn with_reasoning_options(mut self, reasoning_options: ReasoningOptions) -> Self {
+        self.reasoning_options = Some(reasoning_options);
+        self
     }
 }
 

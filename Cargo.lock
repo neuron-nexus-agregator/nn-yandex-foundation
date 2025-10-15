@@ -228,6 +228,7 @@ dependencies = [
  "base64",
  "dotenvy",
  "nn_yandex_art 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "nn_yandex_gpt",
  "tokio",
 ]
 
@@ -805,11 +806,10 @@ dependencies = [
 
 [[package]]
 name = "nn_yandex_gpt"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "reqwest",
  "serde",
- "serde_as",
  "serde_json",
  "serde_with",
 ]
@@ -1153,12 +1153,6 @@ checksum = "5f0e2c6ed6606019b4e29e69dbaba95b11854410e5347d525002456dbbb786b6"
 dependencies = [
  "serde_derive",
 ]
-
-[[package]]
-name = "serde_as"
-version = "0.0.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4ee4afe4c5c3b69699c4267ae42b838e911466d7ca0005046adc93ac95bb16dd"
 
 [[package]]
 name = "serde_derive"

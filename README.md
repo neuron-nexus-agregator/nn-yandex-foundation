@@ -35,43 +35,92 @@ Dependencies included in the workspace:
 
 ```rust
 use nn_yandex_gpt::{TextGenerator, ModelType, Version};
-use nn_yandex_gpt::models::request::{Request as TextRequest, CompletionOptions};
-use nn_yandex_gpt::models::message::{Message, Role};
+use nn_yandex_gpt::models::request::{RequestBuilder, CompletionOptions};
+use nn_yandex_gpt::models::message::{MessageBuilder, Role};
 
-#[tokio::main]
-async fn main() {
-    const BUCKET: &str = "your-bucket-id";
-    const API_KEY: &str = "your-api-key";
+pub async fn generate_text(text: &str, prompt: &str) -> Result<String, anyhow::Error> {
 
-    let generator = TextGenerator::new(API.to_string(), BUCKET.to_string());
+    let BUCKET = "bucket".to_string();
+    let API_KEY = "api".to_string();
 
-    let messages = vec![
-        Message {
-            role: Role::System,
-            text: Some("You are a professional mathematician".to_string()),
-            tool_call_list: None,
-            tool_result_list: None,
+    let prompt_message = MessageBuilder::new()
+        .with_role(Role::System)
+        .with_text(prompt)
+        .build();
+
+    let user_message = MessageBuilder::new()
+        .with_role(Role::User)
+        .with_text(text)
+        .build();
+
+    let opts = CompletionOptions::new()
+        .with_temperature(0.3)
+        .with_max_tokens(1024);
+
+    let req = RequestBuilder::new()
+        .message(prompt_message)
+        .message(user_message)
+        .with_completion_options(opts)
+        .build();
+
+    let generator = TextGenerator::new(API_KEY, BUCKET);
+    let result = generator.complete(ModelType::GptPro, Version::RC, req).await;
+    match result {
+        Ok(result) => {
+            let alt = result.result.alternatives[0].clone();
+            Ok(alt.message.text)
         },
-        Message {
-            role: Role::User,
-            text: Some("Write a fictional proof that 2 + 2 = 5".to_string()),
-            tool_call_list: None,
-            tool_result_list: None,
+        Err(err) => Err(anyhow::Error::new(err)),
+    }
+}
+
+pub async fn start_chating(){
+    use std::io::{stdin,stdout,Write};
+
+    let BUCKET = "bucket".to_string();
+    let API_KEY = "api".to_string();
+
+    let prompt_message = MessageBuilder::new()
+        .with_role(Role::System)
+        .with_text("Ты — профессиональный ассистент")
+        .build();
+
+    let assistant_message = MessageBuilder::new()
+        .with_role(Role::System)
+        .with_text("Чем я могу вам помочь?")
+        .build();
+
+    let opts = CompletionOptions::new()
+        .with_temperature(0.7);
+
+    let mut req = RequestBuilder::new()
+        .message(prompt_message)
+        .message(assistant_message)
+        .with_completion_options(opts)
+        .build();
+
+    let generator = TextGenerator::new(API_KEY, BUCKET);
+
+    println!("Ассистент: Чем я могу вам помочь?", );
+    loop {
+        print!("Вы: ");
+        let mut s=String::new();
+        let _=stdout().flush();
+        stdin().read_line(&mut s).expect("Did not enter a correct string");
+        let user_message = MessageBuilder::new()
+            .with_role(Role::User)
+            .with_text(&s)
+            .build();
+        req.messages.push(user_message);
+        let result = generator.complete(ModelType::GptPro, Version::RC, req.clone()).await;
+        match result {
+            Ok(result) => {
+                let alt = result.result.alternatives[0].clone();
+                req.messages.push(alt.message.clone());
+                println!("Ассистент: {}", alt.message.text);
+            },
+            Err(err) => println!("{err}"),
         }
-    ];
-
-    let mut req = TextRequest::new(messages);
-
-    let mut completion_options = CompletionOptions::new();
-    completion_options.temperature = Some(0.3);
-    completion_options.max_tokens = Some(500);
-    completion_options.reasoning_options = None;
-
-    req.completion_options = Some(completion_options);
-
-    match generator.complete(ModelType::GptPro, Version::RC, req).await {
-        Ok(res) => println!("Text generation result: {:?}", res.result.alternatives[0].message.text),
-        Err(e) => eprintln!("Error during text generation: {}", e),
     }
 }
 ```
