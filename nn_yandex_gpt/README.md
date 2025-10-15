@@ -15,7 +15,7 @@ Add to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-nn_yandex_gpt = "0.1.0"
+nn_yandex_gpt = "0.2.1"
 ```
 
 ## Example
